@@ -3,12 +3,12 @@ import enumeratum._
 
 sealed trait SwitchType extends EnumEntry
 object SwitchType       extends Enum[SwitchType] {
-  case object MX         extends SwitchType
+  case object Mx         extends SwitchType
   case object LowProfile extends SwitchType
   val values = findValues
 }
 
-case class Size(width: Int, height: Int)
+case class Size(width: BigDecimal, height: BigDecimal)
 
 case class Position(x: BigDecimal, y: BigDecimal)
 case class PolyEdge(point: Position, radius: BigDecimal = 0)
@@ -52,9 +52,10 @@ case class Microcontroller(
 
 sealed trait EdgeType extends EnumEntry
 object EdgeType       extends Enum[EdgeType] {
-  case object Aligned      extends EdgeType
-  case object Free         extends EdgeType
-  case object TraceButtons extends EdgeType
+  case object Aligned       extends EdgeType
+  case object Free          extends EdgeType
+  case object TraceButtons  extends EdgeType
+  case object FollowButtons extends EdgeType
   val values = findValues
 }
 
@@ -87,5 +88,5 @@ case class Keyboard(
     switch: SwitchType,
     angle: Int,
     mc: Map[String, Microcontroller],
-    blocks: KeyboardBlock
+    blocks: List[KeyboardBlock]
 )
