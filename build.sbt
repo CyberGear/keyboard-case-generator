@@ -9,5 +9,6 @@ lazy val root = (project in file("."))
     libraryDependencies += "com.github.dzufferey" %% "scadla" % "0.1.1",
     libraryDependencies += "com.fasterxml.jackson.core" % "jackson-databind" % "2.15.2",
     libraryDependencies += "com.fasterxml.jackson.dataformat" % "jackson-dataformat-yaml" % "2.15.2",
-    libraryDependencies += "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.15.2"
+    libraryDependencies += "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.15.2",
+    libraryDependencies += "com.beachape" %% "enumeratum" % "1.7.3"
   )
