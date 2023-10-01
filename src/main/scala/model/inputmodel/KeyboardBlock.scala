@@ -1,6 +1,7 @@
 package model.inputmodel
 
 case class KeyboardBlock(
+    name: String,
     mc: MicrocontrollerPosition,
     layout: Layout,
     ports: List[PortCutout],
