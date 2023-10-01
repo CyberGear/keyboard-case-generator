@@ -1,4 +1,4 @@
-package model
+package inputmodel
 
 import enumeratum._
 

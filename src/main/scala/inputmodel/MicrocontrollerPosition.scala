@@ -1,4 +1,4 @@
-package model
+package inputmodel
 
 case class MicrocontrollerPosition(
     name: String,

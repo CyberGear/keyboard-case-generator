@@ -1,5 +1,4 @@
-import model.{Key, Layout, Row}
-import org.scalatest.AppendedClues.convertToClueful
+import inputmodel.{Key, Layout, Row}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import parser.YamlMapper
