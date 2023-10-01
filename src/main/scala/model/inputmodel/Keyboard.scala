@@ -6,5 +6,5 @@ case class Keyboard(
     switch: SwitchType,
     angle: Int,
     mc: Map[String, Microcontroller],
-    blocks: List[KeyboardBlock]
+    blocks: List[KeyboardBlock],
 )

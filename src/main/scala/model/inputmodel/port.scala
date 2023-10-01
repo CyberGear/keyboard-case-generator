@@ -17,11 +17,11 @@ case class MicrocontrollerPort(
     shape: Option[Polygon],
     edge: Edge,
     horizontalPosition: BigDecimal,
-    verticalOffset: BigDecimal
+    verticalOffset: BigDecimal,
 )
 
 case class PortCutout(
     `type`: Port,
     edge: Edge,
-    position: BigDecimal
+    position: BigDecimal,
 )

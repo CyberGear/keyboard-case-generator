@@ -2,7 +2,7 @@ package parser
 
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.{DeserializationContext, JsonDeserializer}
-import model.inputmodel.{Key, Layout, Position, Row, Size}
+import model.inputmodel._
 
 import scala.annotation.tailrec
 
@@ -52,11 +52,15 @@ class KleJsonDeserializer extends JsonDeserializer[Layout] {
       .map(p => p.head.strip() -> p.last.strip())
       .toMap
 
-  private def nextKey(previousRowKey: Option[Key], previous: Option[Key], args: Map[String, String] = Map.empty): Key = {
-    val xPos = previous.map(_.position).getOrElse(Position(0, 0))
+  private def nextKey(
+      previousRowKey: Option[Key],
+      previous: Option[Key],
+      args: Map[String, String] = Map.empty,
+  ): Key = {
+    val xPos  = previous.map(_.position).getOrElse(Position(0, 0))
     val xSize = previous.map(_.size).getOrElse(Size(0, 0))
 
-    val yPos = previousRowKey.map(_.position).getOrElse(Position(0, 0))
+    val yPos  = previousRowKey.map(_.position).getOrElse(Position(0, 0))
     val ySize = previousRowKey.map(_.size).getOrElse(Size(0, 0))
 
     Key(
