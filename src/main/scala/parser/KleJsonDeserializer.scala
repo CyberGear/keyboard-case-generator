@@ -22,7 +22,7 @@ class KleJsonDeserializer extends JsonDeserializer[Layout] {
     case Row(row, group) =>
       readLayout(
         input.drop(row.length + 1).trim,
-        rows :+ readKeys(s"${group.trim},", rows.lastOption.map(_.keys.head))
+        rows :+ readKeys(s"${group.trim},", rows.lastOption.map(_.keys.head)),
       )
     case _               => Layout(rows)
   }
@@ -34,13 +34,13 @@ class KleJsonDeserializer extends JsonDeserializer[Layout] {
         readKeys(
           row.drop(block.length).trim,
           previousRowKey,
-          keys :+ nextKey(previousRowKey, keys.lastOption, parseMods(mods))
+          keys :+ nextKey(previousRowKey, keys.lastOption, parseMods(mods)),
         )
       case Switch(letter)    =>
         readKeys(
           row.drop(letter.length).trim,
           previousRowKey,
-          keys :+ nextKey(previousRowKey, keys.lastOption)
+          keys :+ nextKey(previousRowKey, keys.lastOption),
         )
       case _                 => model.inputmodel.Row(keys)
     }
@@ -66,14 +66,14 @@ class KleJsonDeserializer extends JsonDeserializer[Layout] {
     Key(
       Position(
         xPos.x + xSize.width + BigDecimal(args.getOrElse("x", "0")),
-        previous.map(_.position.y).getOrElse(yPos.y + ySize.height + BigDecimal(args.getOrElse("y", "0")))
+        previous.map(_.position.y).getOrElse(yPos.y + ySize.height + BigDecimal(args.getOrElse("y", "0"))),
       ),
       Size(
         BigDecimal(args.getOrElse("w", "1")),
-        BigDecimal(args.getOrElse("h", "1"))
+        BigDecimal(args.getOrElse("h", "1")),
       ),
       args.contains("l"),
-      args.contains("d")
+      args.contains("d"),
     )
   }
 

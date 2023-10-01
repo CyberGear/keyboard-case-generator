@@ -5,6 +5,4 @@ class KleKeyboardCaseGenerator(val keyboard: Keyboard) {
 
   def generateCase: Case = ???
 
-
-
 }

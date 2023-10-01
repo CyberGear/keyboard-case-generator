@@ -10,7 +10,7 @@ object Util {
 
   def storeCase(keyboardCase: Case): Unit = {
     keyboardCase.blocks.foreach { case Block(blockName, parts) =>
-      parts.foreach{ case Part(name, solid) =>
+      parts.foreach { case Part(name, solid) =>
         val partName = s"${keyboardCase.name}_${keyboardCase.version}_${blockName}_$name.stl"
         OpenSCAD.toSTL(solid, s"./${keyboardCase.name}/${keyboardCase.version}/$partName")
       }

@@ -15,7 +15,7 @@ case class Key(
     size: Size,
     stepped: Boolean,
     decal: Boolean,
-)          {
+) {
   override def toString: String = s"Key($position $size)"
 }
 object Key {
