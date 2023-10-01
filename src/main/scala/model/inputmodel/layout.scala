@@ -1,4 +1,4 @@
-package inputmodel
+package model.inputmodel
 
 case class Layout(rows: List[Row])
 object Layout {

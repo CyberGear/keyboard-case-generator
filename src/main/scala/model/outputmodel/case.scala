@@ -1,4 +1,4 @@
-package outputmodel
+package model.outputmodel
 
 import scadla.Solid
 

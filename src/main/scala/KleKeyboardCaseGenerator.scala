@@ -1,5 +1,5 @@
-import inputmodel.Keyboard
-import outputmodel.Case
+import model.inputmodel.Keyboard
+import model.outputmodel.Case
 
 class KleKeyboardCaseGenerator(val keyboard: Keyboard) {
 

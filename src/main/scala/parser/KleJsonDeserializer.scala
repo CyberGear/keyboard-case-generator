@@ -2,7 +2,7 @@ package parser
 
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.{DeserializationContext, JsonDeserializer}
-import inputmodel.{Key, Layout, Position, Size}
+import model.inputmodel.{Key, Layout, Position, Row, Size}
 
 import scala.annotation.tailrec
 
@@ -18,7 +18,7 @@ class KleJsonDeserializer extends JsonDeserializer[Layout] {
   }
 
   @tailrec
-  private def readLayout(input: String, rows: List[inputmodel.Row] = Nil): Layout = input match {
+  private def readLayout(input: String, rows: List[Row] = Nil): Layout = input match {
     case Row(row, group) =>
       readLayout(
         input.drop(row.length + 1).trim,
@@ -28,7 +28,7 @@ class KleJsonDeserializer extends JsonDeserializer[Layout] {
   }
 
   @tailrec
-  private def readKeys(row: String, previousRowKey: Option[Key], keys: List[Key] = Nil): inputmodel.Row =
+  private def readKeys(row: String, previousRowKey: Option[Key], keys: List[Key] = Nil): Row =
     row match {
       case Mods(block, mods) =>
         readKeys(
@@ -42,7 +42,7 @@ class KleJsonDeserializer extends JsonDeserializer[Layout] {
           previousRowKey,
           keys :+ nextKey(previousRowKey, keys.lastOption)
         )
-      case _                 => inputmodel.Row(keys)
+      case _                 => model.inputmodel.Row(keys)
     }
 
   private def parseMods(modsString: String): Map[String, String] =

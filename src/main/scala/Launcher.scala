@@ -1,4 +1,4 @@
-import inputmodel.Keyboard
+import model.inputmodel.Keyboard
 import parser.YamlMapper
 import scadla.Solid
 

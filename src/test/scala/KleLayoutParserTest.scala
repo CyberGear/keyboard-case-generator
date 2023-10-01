@@ -1,4 +1,4 @@
-import inputmodel.{Key, Layout, Row}
+import model.inputmodel.{Key, Layout, Row}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import parser.YamlMapper

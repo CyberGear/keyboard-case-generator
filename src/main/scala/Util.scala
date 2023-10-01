@@ -1,4 +1,4 @@
-import outputmodel.{Block, Case, Part}
+import model.outputmodel.{Block, Case, Part}
 import scadla.Solid
 import scadla.backends.OpenSCAD
 
