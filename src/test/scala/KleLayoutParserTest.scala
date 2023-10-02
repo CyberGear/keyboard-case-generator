@@ -11,12 +11,12 @@ class KleLayoutParserTest extends AnyFlatSpec with Matchers {
     val actual = YamlMapper.readValue[Layout](
       asYamlString(
         """      [ { x:2.25,c:"#ffffff",p:"XDA",a:7},"Esc",{x:0.25},"F1","F2","F3","F4",{x:0.25},"F5","F6"],
-        |      [ { y:0.25 },"M1","M2",{ x:0.25,a:5 },"~\n`","!\n1","@\n2","#\n3","$\n4","%\n5","^\n6" ],
-        |      [ { a:7 },"M3","M4",{ x:0.25,w:1.5 },"Tab","Q","W","E","R","T" ],
-        |      [ "M5","M6",{ x:0.25,w:1.25,w2:1.75,l:true },"Caps Lock",{ x:-1.25,w:1.75 },"Caps Lock","A","S","D","F","G" ],
-        |      [ "M7","M8",{ x:0.25,w:2.25 },"Shift","Z","X","C","V","B" ],
-        |      [ "M9","M0",{ x:0.25,w:1.25 },"Ctrl","Fn",{ w:1.25 },"Win",{ w:1.25 },"Alt",{ w:2.5 },"" ]
-        |""".stripMargin
+          |      [ { y:0.25 },"M1","M2",{ x:0.25,a:5 },"~\n`","!\n1","@\n2","#\n3","$\n4","%\n5","^\n6" ],
+          |      [ { a:7 },"M3","M4",{ x:0.25,w:1.5 },"Tab","Q","W","E","R","T" ],
+          |      [ "M5","M6",{ x:0.25,w:1.25,w2:1.75,l:true },"Caps Lock",{ x:-1.25,w:1.75 },"Caps Lock","A","S","D","F","G" ],
+          |      [ "M7","M8",{ x:0.25,w:2.25 },"Shift","Z","X","C","V","B" ],
+          |      [ "M9","M0",{ x:0.25,w:1.25 },"Ctrl","Fn",{ w:1.25 },"Win",{ w:1.25 },"Alt",{ w:2.5 },"" ]
+          |""".stripMargin
       )
     )
 
@@ -79,7 +79,6 @@ class KleLayoutParserTest extends AnyFlatSpec with Matchers {
       .head
       .keys
       .last
-      .position
       .x should be(6)
 
     YamlMapper
@@ -92,7 +91,6 @@ class KleLayoutParserTest extends AnyFlatSpec with Matchers {
       .head
       .keys
       .last
-      .position
       .x should be(5)
 
     YamlMapper
@@ -105,7 +103,6 @@ class KleLayoutParserTest extends AnyFlatSpec with Matchers {
       .head
       .keys
       .last
-      .position
       .x should be(5)
   }
 
@@ -113,16 +110,16 @@ class KleLayoutParserTest extends AnyFlatSpec with Matchers {
     val layout = YamlMapper.readValue[Layout](
       asYamlString(
         """[ "", {x:2}, "" ],
-        |[ {x:1,w:2}, "" ],
-        |[ "", {x:0.5}, "", {x:0.5}, "" ],
-        |[ {x:0.75}, "", {x:0.5}, "" ]""".stripMargin
+          |[ {x:1,w:2}, "" ],
+          |[ "", {x:0.5}, "", {x:0.5}, "" ],
+          |[ {x:0.75}, "", {x:0.5}, "" ]""".stripMargin
       )
     ) should be(
       Layout(
         Row(Key(), Key(x = 3)),
         Row(Key(x = 1, y = 1, w = 2)),
         Row(Key(y = 2), Key(x = 1.5, y = 2), Key(x = 3, y = 2)),
-        Row(Key(x = 0.75, y = 3), Key(x = 2.25, y = 3))
+        Row(Key(x = 0.75, y = 3), Key(x = 2.25, y = 3)),
       )
     )
   }
@@ -142,7 +139,7 @@ class KleLayoutParserTest extends AnyFlatSpec with Matchers {
         Row(Key(x = 1, y = 0.5, w = 2)),
         Row(Key(y = 1), Key(x = 3, y = 1)),
         Row(Key(y = 2.25, w = 4)),
-        Row(Key(y = 3.5), Key(x = 1, y = 3.5), Key(x = 2, y = 3.5), Key(x = 3, y = 3.5))
+        Row(Key(y = 3.5), Key(x = 1, y = 3.5), Key(x = 2, y = 3.5), Key(x = 3, y = 3.5)),
       )
     )
   }

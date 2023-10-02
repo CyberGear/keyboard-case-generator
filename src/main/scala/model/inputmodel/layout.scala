@@ -11,20 +11,12 @@ object Row {
 }
 
 case class Key(
-    position: Position,
-    size: Size,
-    stepped: Boolean,
-    decal: Boolean,
+    x: BigDecimal = 0,
+    y: BigDecimal = 0,
+    w: BigDecimal = 1,
+    h: BigDecimal = 1,
+    stepped: Boolean = false,
+    decal: Boolean = false,
 ) {
-  override def toString: String = s"Key($position $size)"
-}
-object Key {
-  def apply(
-      x: BigDecimal = 0,
-      y: BigDecimal = 0,
-      w: BigDecimal = 1,
-      h: BigDecimal = 1,
-      s: Boolean = false,
-      d: Boolean = false,
-  ): Key = this(Position(x, y), Size(w, h), s, d)
+  override def toString: String = s"Key($x;$y ${w}x$h)"
 }

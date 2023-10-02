@@ -2,7 +2,8 @@ import constants.KeyboardConversions
 import model.inputmodel.{Keyboard, KeyboardBlock}
 import model.outputmodel.{Block, Case, Part}
 import scadla.InlineOps._
-import scadla.{Solid, _}
+import scadla._
+import squants.space.Length
 import squants.space.LengthConversions.LengthConversions
 
 import scala.language.postfixOps
@@ -24,27 +25,32 @@ class KleKeyboardCaseGenerator(val keyboard: Keyboard) {
 
   private def generateTestSolid(keyboard: Keyboard, block: KeyboardBlock): Solid = {
     val switches = block.layout.rows.flatMap(_.keys)
-    val casePart = switches.map(key =>
-      Cube(key.size.width * 1 cu, key.size.height * 1 cu, 2 mm)
-        .moveX(key.position.x * 1 pu)
-        .moveY(key.position.y * 1 pu)
-    ).combine
-    val topSwitches = switches.map(key =>
-      Cube(key.size.width * 1 pu, key.size.height * 1 pu, 2 mm)
-        .moveX(key.position.x * 1 pu)
-        .moveY(key.position.y * 1 pu)
-    ).combine
 
-    casePart
+    val casePart    =
+      switches.map(key => CenterU.cube(key.w * 1 cu, key.h * 1 cu, 2 mm).moveXY(key.x * 1 pu, key.y * 1 pu)).combine
+    val topSwitches =
+      switches.map(key => CenterU.cube(key.w * 1 pu, key.h * 1 pu, 2 mm).moveXY(key.x * 1 pu, key.y * 1 pu)).combine
+
+    casePart - topSwitches
   }
 
-
-  implicit class SolidImplicits(solids: List[Solid]) {
+  implicit class SolidsImplicits(solids: List[Solid]) {
     def combine: Solid = solids match {
-      case head :: Nil => head
-      case a :: b :: Nil => a + b
-      case head :: neck :: tail => tail.foldLeft(head + neck)((sum, part)  =>  sum + part)
+      case Nil                  => throw new IllegalStateException("Can't combine an empty List")
+      case head :: Nil          => head
+      case a :: b :: Nil        => a + b
+      case head :: neck :: tail => tail.foldLeft(head + neck)((sum, part) => sum + part)
     }
+  }
+
+  implicit class SolidImplicits(solid: Solid) {
+    def moveXY(x: Length, y: Length): Translate =
+      solid.moveX(x).moveY(y)
+  }
+
+  object CenterU {
+    def cube(width: Length, depth: Length, height: Length): Translate =
+      Cube(width, depth, height).moveXY(width / -2, depth / -2)
   }
 
 }

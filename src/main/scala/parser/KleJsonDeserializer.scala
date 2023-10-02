@@ -57,21 +57,14 @@ class KleJsonDeserializer extends JsonDeserializer[Layout] {
       previous: Option[Key],
       args: Map[String, String] = Map.empty,
   ): Key = {
-    val xPos  = previous.map(_.position).getOrElse(Position(0, 0))
-    val xSize = previous.map(_.size).getOrElse(Size(0, 0))
-
-    val yPos  = previousRowKey.map(_.position).getOrElse(Position(0, 0))
-    val ySize = previousRowKey.map(_.size).getOrElse(Size(0, 0))
+    val xKey = previous.getOrElse(Key(0, 0, 0, 0))
+    val yKey = previousRowKey.getOrElse(Key(0, 0, 0, 0))
 
     Key(
-      Position(
-        xPos.x + xSize.width + BigDecimal(args.getOrElse("x", "0")),
-        previous.map(_.position.y).getOrElse(yPos.y + ySize.height + BigDecimal(args.getOrElse("y", "0"))),
-      ),
-      Size(
-        BigDecimal(args.getOrElse("w", "1")),
-        BigDecimal(args.getOrElse("h", "1")),
-      ),
+      xKey.x + xKey.w + BigDecimal(args.getOrElse("x", "0")),
+      previous.map(_.y).getOrElse(yKey.y + yKey.h + BigDecimal(args.getOrElse("y", "0"))),
+      BigDecimal(args.getOrElse("w", "1")),
+      BigDecimal(args.getOrElse("h", "1")),
       args.contains("l"),
       args.contains("d"),
     )
