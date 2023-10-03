@@ -1,5 +1,5 @@
 import constants._
-import model.inputmodel.{Key, Keyboard, KeyboardBlock}
+import model.inputmodel.{EdgeType, Key, Keyboard, KeyboardBlock}
 import model.outputmodel.{Block, Case, Part}
 import scadla.InlineOps._
 import scadla._
@@ -25,13 +25,30 @@ class KleKeyboardCaseGenerator(val keyboard: Keyboard) {
 
   private def generateTestSolid(keyboard: Keyboard, block: KeyboardBlock): Solid = {
 
-    val box      = block.layout.keys.map(_.box).combine
+    val box      = buildBox(block)
     val keySpace = block.layout.keys.map(_.kPlace).combine
-    val cap      = block.layout.keys.map(_.cap).combine
-    val switch   = block.layout.keys.map(_.switch).combine
+    val caps     = block.layout.keys.map(_.cap).combine
+    val switches = block.layout.keys.map(_.switch).combine
 
-    val axis = (Cube(30 mm, 1 mm, 1 mm) + Cube(1 mm, 20 mm, 1 mm) + Cube(1 mm, 1 mm, 10 mm)).moveZ(-5 mm)
-    axis + cap - switch
+//    val axis = (Cube(30 mm, 1 mm, 1 mm) + Cube(1 mm, 20 mm, 1 mm) + Cube(1 mm, 1 mm, 10 mm)).moveZ(-5 mm)
+//    box - caps + switches
+    caps - switches
+  }
+
+  private def buildBox(block: KeyboardBlock): Solid = {
+    val topEdge    = block.top match {
+      case EdgeType.Free => block.layout.keys.map(k => k.y.pu + k.h.pu + CaseBrim).max
+    }
+    val bottomEdge = block.top match {
+      case EdgeType.Free => block.layout.keys.map(_.y.pu - CaseBrim).min
+    }
+    val leftEdge   = block.top match {
+      case EdgeType.Free => block.layout.keys.map(_.x.pu - CaseBrim).min
+    }
+    val rightEdge  = block.top match {
+      case EdgeType.Free => block.layout.keys.map(k => k.x.pu + k.w.pu + CaseBrim).max
+    }
+    Cube(rightEdge - leftEdge, topEdge - bottomEdge, 2 mm).moveXY(-CaseBrim, -CaseBrim)
   }
 
   implicit class KeyImplicits(key: Key) {
@@ -46,10 +63,15 @@ class KleKeyboardCaseGenerator(val keyboard: Keyboard) {
     def kPlace: Solid =
       Cube(key.w pu, key.h pu, 2 mm)
         .moveXY(key.x pu, key.y pu)
-    def switch: Solid =
-      Cube(1 su, 1 su, 2 mm)
+    def switch: Solid = {
+      val switchMount = Cube(1 su, 1 su, 2 mm)
         .moveXY((key.w.pu - 1.su) / 2, (key.h.pu - 1.su) / 2)
         .moveXY(key.x pu, key.y pu)
+
+      if (key.w > 2) switchMount + Cube(32.2 mm, 2.3 mm , 2 mm)
+
+      switchMount +
+    }
   }
 
   implicit class SolidsImplicits(solids: List[Solid]) {
