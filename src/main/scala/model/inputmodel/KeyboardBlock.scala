@@ -1,5 +1,7 @@
 package model.inputmodel
 
+import model.inputmodel.Layout
+
 case class KeyboardBlock(
     name: String,
     mc: MicrocontrollerPosition,

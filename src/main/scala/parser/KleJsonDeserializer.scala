@@ -2,6 +2,7 @@ package parser
 
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.{DeserializationContext, JsonDeserializer}
+import model.inputmodel.Layout
 import model.inputmodel._
 
 import scala.annotation.tailrec
@@ -14,21 +15,21 @@ class KleJsonDeserializer extends JsonDeserializer[Layout] {
 
   override def deserialize(p: JsonParser, ctxt: DeserializationContext): Layout = {
     val kleJson = ctxt.readValue(p, classOf[String])
-    readLayout(kleJson)
+    Layout(readAllKeys(kleJson))
   }
 
   @tailrec
-  private def readLayout(input: String, rows: List[Row] = Nil): Layout = input match {
+  private def readAllKeys(input: String, rows: List[List[Key]] = Nil): List[Key] = input match {
     case Row(row, group) =>
-      readLayout(
+      readAllKeys(
         input.drop(row.length + 1).trim,
-        rows :+ readKeys(s"${group.trim},", rows.lastOption.map(_.keys.head)),
+        rows :+ readKeys(s"${group.trim},", rows.lastOption.map(_.head)),
       )
-    case _               => Layout(rows)
+    case _               => rows.flatten
   }
 
   @tailrec
-  private def readKeys(row: String, previousRowKey: Option[Key], keys: List[Key] = Nil): Row =
+  private def readKeys(row: String, previousRowKey: Option[Key], keys: List[Key] = Nil): List[Key] =
     row match {
       case Mods(block, mods) =>
         readKeys(
@@ -42,7 +43,7 @@ class KleJsonDeserializer extends JsonDeserializer[Layout] {
           previousRowKey,
           keys :+ nextKey(previousRowKey, keys.lastOption),
         )
-      case _                 => model.inputmodel.Row(keys)
+      case _                 => keys
     }
 
   private def parseMods(modsString: String): Map[String, String] =

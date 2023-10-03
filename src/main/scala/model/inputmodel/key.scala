@@ -1,15 +1,5 @@
 package model.inputmodel
 
-case class Layout(rows: List[Row])
-object Layout {
-  def apply(rows: Row*): Layout = Layout(rows.toList)
-}
-
-case class Row(keys: List[Key])
-object Row {
-  def apply(keys: Key*): Row = Row(keys.toList)
-}
-
 case class Key(
     x: BigDecimal = 0,
     y: BigDecimal = 0,
@@ -20,3 +10,5 @@ case class Key(
 ) {
   override def toString: String = s"Key($x;$y ${w}x$h)"
 }
+
+case class Layout(keys: List[Key])

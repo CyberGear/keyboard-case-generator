@@ -1,11 +1,12 @@
-import model.inputmodel.{Key, Layout, Row}
+import model.inputmodel.Key
+import model.inputmodel.Layout
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import parser.YamlMapper
 
 import scala.language.implicitConversions
 
-class KleLayoutParserTest extends AnyFlatSpec with Matchers {
+class KleLayoutParserTest extends AnyFlatSpec with Matchers with Utils {
 
   it should "parse yaml" in {
     val actual = YamlMapper.readValue[Layout](
@@ -20,52 +21,26 @@ class KleLayoutParserTest extends AnyFlatSpec with Matchers {
       )
     )
 
-    actual.rows should not be Nil
+    actual.keys should not be Nil
   }
 
-  it should "correct number of rows" in {
-    val actual = YamlMapper.readValue[Layout](
-      asYamlString(
-        """[ "" ], [ "" ], [ "" ], [ "" ], [ "" ], [ "" ]"""
-      )
-    )
-
-    actual.rows.length should be(6)
-  }
-
-  it should "correct number of columns" in {
+  it should "correct number of keys" in {
     YamlMapper
       .readValue[Layout](
         asYamlString(
-          """[ "", "", "", "", "", "", "" ]"""
+          """[ "", "", "", "", "", "", "" ],
+            |[ "", "" ]
+            |""".stripMargin
         )
       )
-      .rows
-      .head
       .keys
-      .length should be(7)
+      .length should be(9)
 
-    YamlMapper
-      .readValue[Layout](
-        asYamlString(
-          """[ "A", "B" ]"""
-        )
-      )
-      .rows
-      .head
-      .keys
-      .length should be(2)
+    val actual1 = YamlMapper.readValue[Layout](asYamlString("""[ "A", "B" ]"""))
+    actual1.keys.length should be(2)
 
-    YamlMapper
-      .readValue[Layout](
-        asYamlString(
-          """[ "A", {w:10},"B" ]"""
-        )
-      )
-      .rows
-      .head
-      .keys
-      .length should be(2)
+    val actual2 = YamlMapper.readValue[Layout](asYamlString("""[ "A", {w:10},"B" ]"""))
+    actual2.keys.length should be(2)
   }
 
   it should "read correct width and position" in {
@@ -75,8 +50,6 @@ class KleLayoutParserTest extends AnyFlatSpec with Matchers {
           """[ "", "", "", "", "", "", "" ]"""
         )
       )
-      .rows
-      .head
       .keys
       .last
       .x should be(6)
@@ -87,8 +60,6 @@ class KleLayoutParserTest extends AnyFlatSpec with Matchers {
           """[ "", {x:3.75, w:0.25}, "", "" ]"""
         )
       )
-      .rows
-      .head
       .keys
       .last
       .x should be(5)
@@ -99,15 +70,13 @@ class KleLayoutParserTest extends AnyFlatSpec with Matchers {
           """[ {x:3.75}, "", {w:0.25}, "", "" ]"""
         )
       )
-      .rows
-      .head
       .keys
       .last
       .x should be(5)
   }
 
   it should "read custom horizontal keyboard alignment" in {
-    val layout = YamlMapper.readValue[Layout](
+    YamlMapper.readValue[Layout](
       asYamlString(
         """[ "", {x:2}, "" ],
           |[ {x:1,w:2}, "" ],
@@ -115,12 +84,12 @@ class KleLayoutParserTest extends AnyFlatSpec with Matchers {
           |[ {x:0.75}, "", {x:0.5}, "" ]""".stripMargin
       )
     ) should be(
-      Layout(
-        Row(Key(), Key(x = 3)),
-        Row(Key(x = 1, y = 1, w = 2)),
-        Row(Key(y = 2), Key(x = 1.5, y = 2), Key(x = 3, y = 2)),
-        Row(Key(x = 0.75, y = 3), Key(x = 2.25, y = 3)),
-      )
+      Layout(List(
+        Key(), Key(x = 3),
+        Key(x = 1, y = 1, w = 2),
+        Key(y = 2), Key(x = 1.5, y = 2), Key(x = 3, y = 2),
+        Key(x = 0.75, y = 3), Key(x = 2.25, y = 3),
+      ))
     )
   }
 
@@ -134,24 +103,14 @@ class KleLayoutParserTest extends AnyFlatSpec with Matchers {
           |[ {y:0.25,w:1}, "", "", "", "" ]""".stripMargin
       )
     ) should be(
-      Layout(
-        Row(Key(), Key(x = 3)),
-        Row(Key(x = 1, y = 0.5, w = 2)),
-        Row(Key(y = 1), Key(x = 3, y = 1)),
-        Row(Key(y = 2.25, w = 4)),
-        Row(Key(y = 3.5), Key(x = 1, y = 3.5), Key(x = 2, y = 3.5), Key(x = 3, y = 3.5)),
-      )
+      Layout(List(
+        Key(), Key(x = 3),
+        Key(x = 1, y = 0.5, w = 2),
+        Key(y = 1), Key(x = 3, y = 1),
+        Key(y = 2.25, w = 4),
+        Key(y = 3.5), Key(x = 1, y = 3.5), Key(x = 2, y = 3.5), Key(x = 3, y = 3.5),
+      ))
     )
-  }
-
-  private def asYamlString(kle: String): String =
-    s""""${kle.replace("\"", "\\\"")}""""
-
-  implicit class AnyLog[A](a: A) {
-    def log: A = {
-      println(a)
-      a
-    }
   }
 
 }
