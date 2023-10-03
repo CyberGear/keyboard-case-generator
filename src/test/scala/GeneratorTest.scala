@@ -17,11 +17,13 @@ class GeneratorTest extends AnyFlatSpec with Matchers with Utils {
       )
     )
 
-    val keyboard     = YamlMapper.readValue[Keyboard](ClassLoader.getSystemResource("MK-TKL-split.yml"))
+    val keyboard     = YamlMapper.readValue[Keyboard](ClassLoader.getSystemResource("MK-LTK.yml"))
     val testKeyboard = keyboard.copy(blocks = keyboard.blocks.take(1).map(_.copy(layout = layout)))
 
-    val generator = new KleKeyboardCaseGenerator(testKeyboard)
+    val generator = new KleKeyboardCaseGenerator(keyboard)
     Util.preview(generator.generateCase.blocks.head.parts.head.solid)
   }
+
+
 
 }

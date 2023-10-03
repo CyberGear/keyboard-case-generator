@@ -9,13 +9,14 @@ import scala.annotation.tailrec
 
 class KleJsonDeserializer extends JsonDeserializer[Layout] {
 
-  private val Row    = """(?s).*?(\[(.+?)]).*""".r
+  private val Row    = """(?s).*?(\[(.+?)]),.*""".r
   private val Mods   = """(?s)^[^"]*?(\{(.*?)}.*?,.*?".*?".*?,).*""".r
   private val Switch = """(?s)^.*?(".*?".*?,).*""".r
 
   override def deserialize(p: JsonParser, ctxt: DeserializationContext): Layout = {
     val kleJson = ctxt.readValue(p, classOf[String])
-    Layout(readAllKeys(kleJson)).invert
+    val patchedKleJson = kleJson.patch(kleJson.lastIndexOf("]"), "],", 1)
+    Layout(readAllKeys(patchedKleJson)).invert
   }
 
   @tailrec

@@ -25,10 +25,10 @@ class KleKeyboardCaseGenerator(val keyboard: Keyboard) {
 
   private def generateTestSolid(keyboard: Keyboard, block: KeyboardBlock): Solid = {
 
-    val box    = block.layout.keys.map(_.box).combine
-    val keycap = block.layout.keys.map(_.kPlace).combine
-    val cap = block.layout.keys.map(_.cap).combine
-    val switch = block.layout.keys.map(_.switch).combine
+    val box      = block.layout.keys.map(_.box).combine
+    val keySpace = block.layout.keys.map(_.kPlace).combine
+    val cap      = block.layout.keys.map(_.cap).combine
+    val switch   = block.layout.keys.map(_.switch).combine
 
     val axis = (Cube(30 mm, 1 mm, 1 mm) + Cube(1 mm, 20 mm, 1 mm) + Cube(1 mm, 1 mm, 10 mm)).moveZ(-5 mm)
     axis + cap - switch
@@ -39,7 +39,7 @@ class KleKeyboardCaseGenerator(val keyboard: Keyboard) {
       Cube(key.w.pu + CaseBrim * 2, key.h.pu + CaseBrim * 2, 2 mm)
         .moveXY(-CaseBrim, -CaseBrim)
         .moveXY(key.x pu, key.y pu)
-    def cap: Solid =
+    def cap: Solid    =
       Cube(key.w.pu - CapInset * 2, key.h.pu - CapInset * 2, 2 mm)
         .moveXY(CapInset, CapInset)
         .moveXY(key.x pu, key.y pu)

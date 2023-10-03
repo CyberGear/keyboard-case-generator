@@ -4,7 +4,7 @@ case class Keyboard(
     name: String,
     version: String,
     switch: SwitchType,
-    angle: Int,
+    tilt: Int,
     mc: Map[String, Microcontroller],
     blocks: List[KeyboardBlock],
 )
