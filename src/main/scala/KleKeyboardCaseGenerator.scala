@@ -27,27 +27,29 @@ class KleKeyboardCaseGenerator(val keyboard: Keyboard) {
 
     val box    = block.layout.keys.map(_.box).combine
     val keycap = block.layout.keys.map(_.kPlace).combine
+    val cap = block.layout.keys.map(_.cap).combine
     val switch = block.layout.keys.map(_.switch).combine
 
-
-    val axis = Cube(30 mm, 1 mm, 1 mm) + Cube(1 mm, 20 mm, 1 mm) + Cube(1 mm, 1 mm, 10 mm)
-    axis + box - keycap + switch
+    val axis = (Cube(30 mm, 1 mm, 1 mm) + Cube(1 mm, 20 mm, 1 mm) + Cube(1 mm, 1 mm, 10 mm)).moveZ(-5 mm)
+    axis + cap - switch
   }
 
   implicit class KeyImplicits(key: Key) {
     def box: Solid    =
-      Cube(key.w.pu + CaseBrim, key.h.pu + CaseBrim, 2 mm)
-        .moveX(-0.5.pu - CaseBrim / 2).moveY(-0.5.pu - CaseBrim / 2)
-        .moveXY(key.w pu, key.h pu)
+      Cube(key.w.pu + CaseBrim * 2, key.h.pu + CaseBrim * 2, 2 mm)
+        .moveXY(-CaseBrim, -CaseBrim)
+        .moveXY(key.x pu, key.y pu)
+    def cap: Solid =
+      Cube(key.w.pu - CapInset * 2, key.h.pu - CapInset * 2, 2 mm)
+        .moveXY(CapInset, CapInset)
+        .moveXY(key.x pu, key.y pu)
     def kPlace: Solid =
       Cube(key.w pu, key.h pu, 2 mm)
-        .moveX(-0.5 pu).moveY(-0.5 pu)
-        .moveXY(key.w pu, key.h pu)
+        .moveXY(key.x pu, key.y pu)
     def switch: Solid =
       Cube(1 su, 1 su, 2 mm)
-        .moveXY(((key.w / 2) pu) - 1.25.su, ((key.h / 2) pu) - 1.25.su)
-//        .moveX((key.w.pu / 4) - 0.5.su).moveY((key.h.pu / 4) - 0.5.su)
-        .moveXY(key.w pu, key.h pu)
+        .moveXY((key.w.pu - 1.su) / 2, (key.h.pu - 1.su) / 2)
+        .moveXY(key.x pu, key.y pu)
   }
 
   implicit class SolidsImplicits(solids: List[Solid]) {

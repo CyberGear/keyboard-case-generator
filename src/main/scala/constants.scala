@@ -6,13 +6,14 @@ import scala.language.postfixOps
 
 package object constants {
 
-  val CaseBrim: Length = 6 mm
-
   object Unit {
     val Place: Length = 19.05 mm
     val Keycap: Length = 18.00 mm
     val Switch: Length = 14.00 mm
   }
+
+  val CaseBrim: Length = 6 mm
+  val CapInset: Length = (Unit.Place - Unit.Keycap) / 2
 
   implicit class KeyboardConversions[A](n: A)(implicit num: Numeric[A]) {
     def pu: Length = Millimeters(BigDecimal(Millimeters(n).value) * BigDecimal(Unit.Place.value))

@@ -15,7 +15,7 @@ class KleJsonDeserializer extends JsonDeserializer[Layout] {
 
   override def deserialize(p: JsonParser, ctxt: DeserializationContext): Layout = {
     val kleJson = ctxt.readValue(p, classOf[String])
-    Layout(readAllKeys(kleJson))
+    Layout(readAllKeys(kleJson)).invert
   }
 
   @tailrec
@@ -63,7 +63,7 @@ class KleJsonDeserializer extends JsonDeserializer[Layout] {
 
     Key(
       xKey.x + xKey.w + BigDecimal(args.getOrElse("x", "0")),
-      previous.map(_.y).getOrElse(yKey.y + yKey.h + BigDecimal(args.getOrElse("y", "0"))),
+      previous.map(_.y).getOrElse(1 + yKey.y + BigDecimal(args.getOrElse("y", "0"))),
       BigDecimal(args.getOrElse("w", "1")),
       BigDecimal(args.getOrElse("h", "1")),
       args.contains("l"),

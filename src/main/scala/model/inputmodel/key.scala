@@ -11,4 +11,9 @@ case class Key(
   override def toString: String = s"Key($x;$y ${w}x$h)"
 }
 
-case class Layout(keys: List[Key])
+case class Layout(keys: List[Key]) {
+  def invert: Layout = {
+    val max = keys.map(k => k.y + k.h).max
+    Layout(keys.map(k => k.copy(y = max - k.y - k.h)))
+  }
+}

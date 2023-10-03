@@ -9,7 +9,10 @@ class GeneratorTest extends AnyFlatSpec with Matchers with Utils {
   it should "generate something" in {
     val layout = YamlMapper.readValue[Layout](
       asYamlString(
-        """["",{w:2,h:2},"",{w:3,h:3},""]
+        """[{a:7},"",{w:2},"",{h:2},""],
+          |[{h:2},"",{w:2,h:2},""],
+          |[{x:3},""],
+          |[{w:2},"","",""]
           |""".stripMargin
       )
     )
