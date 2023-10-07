@@ -10,6 +10,23 @@ import scala.language.postfixOps
 
 class KleKeyboardCaseGenerator(val keyboard: Keyboard) {
 
+  val A: Map[BigDecimal, Length] = Map(
+    BigDecimal(2)    -> 23.8.mm,
+    BigDecimal(2.25) -> 23.8.mm,
+    BigDecimal(2.75) -> 23.8.mm,
+    BigDecimal(3)    -> 38.1.mm,
+    BigDecimal(4)    -> 57.15.mm,
+    BigDecimal(4.5)  -> 69.3.mm,
+    BigDecimal(5.5)  -> 85.7.mm,
+    BigDecimal(6)    -> 95.mm,
+    BigDecimal(6.25) -> 100.mm,
+    BigDecimal(6.5)  -> 104.76.mm,
+    BigDecimal(7)    -> 114.3.mm,
+    BigDecimal(8)    -> 133.35.mm,
+    BigDecimal(9)    -> 133.35.mm,
+    BigDecimal(10)   -> 133.35.mm,
+  )
+
   def generateCase: Case = Case(
     keyboard.name,
     keyboard.version,
@@ -51,33 +68,47 @@ class KleKeyboardCaseGenerator(val keyboard: Keyboard) {
   }
 
   implicit class KeyImplicits(key: Key) {
-    def box: Solid    =
-      Cube(key.w.pu + CaseBrim * 2, key.h.pu + CaseBrim * 2, 2 mm)
-        .moveXY(-CaseBrim, -CaseBrim)
-        .moveXY(key.x pu, key.y pu)
-    def cap: Solid    =
-      Cube(key.w.pu - CapInset * 2, key.h.pu - CapInset * 2, 2 mm)
-        .moveXY(CapInset, CapInset)
-        .moveXY(key.x pu, key.y pu)
-    def kPlace: Solid =
-      Cube(key.w pu, key.h pu, 2 mm)
-        .moveXY(key.x pu, key.y pu)
-    def switch: Solid = {
-      val switchMount = Cube(1 su, 1 su, 2 mm)
-        .moveXY((key.w.pu - 1.su) / 2, (key.h.pu - 1.su) / 2)
-        .moveXY(key.x pu, key.y pu)
+    def box: Solid = Cube(key.w.pu + CaseBrim * 2, key.h.pu + CaseBrim * 2, 2 mm)
+      .moveXY(-CaseBrim, -CaseBrim)
+      .moveXY(key.x pu, key.y pu)
 
-      if (key.w >= 2 && key.w < 3)
-        switchMount +
-          Cube(32.2 mm, 2.8 mm, 2 mm).moveXY((key.w.pu - 32.2.mm) / 2, (key.h.pu - 2.9.mm) / 2 + 0.9.mm).moveXY(key.x pu, key.y pu) +
-          (Cube(3 mm, 13.5 mm, 2 mm) + Cube(3 mm, 13.5 mm, 2 mm).moveX(23.8 mm))
-            .moveXY((key.w.pu - 26.8.mm) / 2, (key.h.pu - 13.5.mm) / 2 - 1.22.mm).moveXY(key.x pu, key.y pu) +
-          (Cube(6.7 mm, 12.3 mm, 2 mm) + Cube(6.7 mm, 12.3 mm, 2 mm).moveX(23.8 mm))
-            .moveXY((key.w.pu - 30.5.mm) / 2, (key.h.pu - 12.3.mm) / 2 - 0.55.mm).moveXY(key.x pu, key.y pu) +
-          Cube(18 mm, 10.7 mm, 2 mm).moveXY((key.w.pu - 18.mm) / 2, (key.h.pu - 10.7.mm) / 2 - 0.55.mm).moveXY(key.x pu, key.y pu)
-      else switchMount
+    def cap: Solid = Cube(key.w.pu - CapInset * 2, key.h.pu - CapInset * 2, 2 mm)
+      .moveXY(CapInset, CapInset)
+      .moveXY(key.x pu, key.y pu)
+
+    def kPlace: Solid = Cube(key.w pu, key.h pu, 2 mm).moveXY(key.x pu, key.y pu)
+
+    def switch: Solid = {
+      val switchMount = key.center(Cube(1 su, 1 su, 2 mm))
+      stabilizer(key).map(_ + switchMount).getOrElse(switchMount).moveXY(key.x pu, key.y pu)
     }
+
+    def center(cube: Cube): Solid = cube.moveXY((key.w.pu - cube.width) / 2, (key.h.pu - cube.depth) / 2)
+
+    def centerTwoFromCenters(cube: Cube, distance: Length): Solid =
+      (cube + cube.moveX(distance)).moveXY(
+        (key.w.pu - (cube.width + distance)) / 2,
+        (key.h.pu - cube.depth) / 2,
+      )
+
+    def centerTwoFromInnerEdges(cube: Cube, distance: Length): Solid =
+      (cube + cube.moveX(distance + cube.width)).moveXY(
+        (key.w.pu - (cube.width * 2 + distance)) / 2,
+        (key.h.pu - cube.depth) / 2,
+      )
   }
+
+  private def stabilizer(key: Key): Option[Solid] =
+    A.get(key.w)
+      .map(stabDistance =>
+        List(
+          key.centerTwoFromInnerEdges(Cube(4.2 mm, 2.8 mm, 2 mm), stabDistance).moveY(0.9 mm),
+          key.centerTwoFromCenters(Cube(3 mm, 13.5 mm, 2 mm), stabDistance).moveY(-1.22 mm),
+          key.centerTwoFromCenters(Cube(6.7 mm, 12.3 mm, 2 mm), stabDistance).moveY(-0.55 mm),
+          if (key.w >= BigDecimal(3)) key.center(Cube(stabDistance, 4.6 mm, 2 mm))
+          else key.center(Cube(18 mm, 10.7 mm, 2 mm)).moveY(-0.55 mm),
+        ).combine
+      )
 
   implicit class SolidsImplicits(solids: List[Solid]) {
     def combine: Solid = solids match {
@@ -88,18 +119,8 @@ class KleKeyboardCaseGenerator(val keyboard: Keyboard) {
     }
   }
 
-  /**
-   *  keycap size | 2, 2.25, 2.75 | 3    | 7     | 8, 9, 10 |
-   *         A in | 0.94          | 1.5  | 4.5   | 5.25     |
-   *         A cm | 23.876        | 38.1 | 11.43 | 13.335   |
-   *
-   *  23.8  38.1  69.343  85.725  95  100   104.76  114.3
-   *  < 3   3     4.5     5.5     6   6.25  6.5     7
-   */
-
   implicit class SolidImplicits(solid: Solid) {
-    def moveXY(x: Length, y: Length): Translate =
-      solid.moveX(x).moveY(y)
+    def moveXY(x: Length, y: Length): Translate = solid.moveX(x).moveY(y)
   }
 
 }
