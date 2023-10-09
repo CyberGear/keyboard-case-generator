@@ -1,3 +1,4 @@
+import model.inputmodel.Keyboard
 import squants.{MetricSystem, SiUnit}
 import squants.space.{Length, LengthUnit, Millimeters}
 import squants.space.LengthConversions._
@@ -23,6 +24,10 @@ package object constants {
 
   implicit class LengthImplicits(length: Length) {
     def + (addition: Length): Length = (length.value + addition.value) mm
+  }
+
+  implicit class BigDecimalImplicits(a: BigDecimal) {
+    def orBigger(b: BigDecimal): BigDecimal = if (a > b) a else b
   }
 
 }

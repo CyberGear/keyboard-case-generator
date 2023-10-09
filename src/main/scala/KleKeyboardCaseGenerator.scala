@@ -1,10 +1,10 @@
 import constants._
-import model.inputmodel.{EdgeType, Key, Keyboard, KeyboardBlock}
+import model.inputmodel._
 import model.outputmodel.{Block, Case, Part}
 import scadla.InlineOps._
 import scadla._
-import squants.space.Length
 import squants.space.LengthConversions.LengthConversions
+import squants.space.{Angle, Length}
 
 import scala.language.postfixOps
 
@@ -44,11 +44,11 @@ class KleKeyboardCaseGenerator(val keyboard: Keyboard) {
     val box      = buildBox(block)
     val keySpace = block.layout.keys.map(_.kPlace).combine
     val caps     = block.layout.keys.map(_.cap).combine
-    val switches = block.layout.keys.map(_.switch).combine
+    val switches = block.layout.keys.map(_.switch(block.size)).combine
 
     val axis = (Cube(30 mm, 1 mm, 1 mm) + Cube(1 mm, 20 mm, 1 mm) + Cube(1 mm, 1 mm, 10 mm)).moveZ(-5 mm)
 //    box - caps + switches
-    axis + caps - switches
+    keySpace - caps + switches
   }
 
   private def buildBox(block: KeyboardBlock): Solid = {
@@ -78,9 +78,13 @@ class KleKeyboardCaseGenerator(val keyboard: Keyboard) {
 
     def kPlace: Solid = Cube(key.w pu, key.h pu, 2 mm).moveXY(key.x pu, key.y pu)
 
-    def switch: Solid = {
+    def switch(size: Size): Solid = {
       val switchMount = key.center(Cube(1 su, 1 su, 2 mm))
-      stabilizer(key).map(_ + switchMount).getOrElse(switchMount).moveXY(key.x pu, key.y pu)
+      key.stabilizer
+        .map(key.rotate(_, angle(size)))
+        .map(_ + switchMount)
+        .getOrElse(switchMount)
+        .moveXY(key.x pu, key.y pu)
     }
 
     def center(cube: Cube): Solid = cube.moveXY((key.w.pu - cube.width) / 2, (key.h.pu - cube.depth) / 2)
@@ -96,19 +100,28 @@ class KleKeyboardCaseGenerator(val keyboard: Keyboard) {
         (key.w.pu - (cube.width * 2 + distance)) / 2,
         (key.h.pu - cube.depth) / 2,
       )
-  }
 
-  private def stabilizer(key: Key): Option[Solid] =
-    A.get(key.w)
-      .map(stabDistance =>
-        List(
-          key.centerTwoFromInnerEdges(Cube(4.2 mm, 2.8 mm, 2 mm), stabDistance).moveY(0.9 mm),
-          key.centerTwoFromCenters(Cube(3 mm, 13.5 mm, 2 mm), stabDistance).moveY(-1.22 mm),
-          key.centerTwoFromCenters(Cube(6.7 mm, 12.3 mm, 2 mm), stabDistance).moveY(-0.55 mm),
-          if (key.w >= BigDecimal(3)) key.center(Cube(stabDistance, 4.6 mm, 2 mm))
-          else key.center(Cube(18 mm, 10.7 mm, 2 mm)).moveY(-0.55 mm),
-        ).combine
-      )
+    def rotate(solid: Solid, angle: Angle): Solid =
+      solid.moveXY((key.w / -2) pu, (key.h / -2) pu).rotateZ(angle).moveXY(key.w / 2 pu, key.h / 2 pu)
+
+    def angle(size: Size): Angle =
+      if (key.w > key.h) if (key.y < size.height / 2) 0 ° else 180 °
+      else if (key.x < size.width / 2) -90 °
+      else 90 °
+
+    def stabilizer: Option[Solid] =
+      A.get(key.w.orBigger(key.h))
+        .map(stabDistance =>
+          List(
+            key.centerTwoFromInnerEdges(Cube(4.2 mm, 2.8 mm, 2 mm), stabDistance).moveY(0.9 mm),
+            key.centerTwoFromCenters(Cube(3 mm, 13.5 mm, 2 mm), stabDistance).moveY(-1.22 mm),
+            key.centerTwoFromCenters(Cube(6.7 mm, 12.3 mm, 2 mm), stabDistance).moveY(-0.55 mm),
+            if (key.w >= BigDecimal(3)) key.center(Cube(stabDistance, 4.6 mm, 2 mm))
+            else key.center(Cube(18 mm, 10.7 mm, 2 mm)).moveY(-0.55 mm),
+          ).combine
+        )
+
+  }
 
   implicit class SolidsImplicits(solids: List[Solid]) {
     def combine: Solid = solids match {
