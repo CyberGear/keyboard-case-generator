@@ -1,6 +1,7 @@
 import model.outputmodel.{Block, Case, Part}
-import scadla.Solid
+import scadla.{Solid, Translate}
 import scadla.backends.OpenSCAD
+import squants.space.Length
 
 import java.io.File
 import scala.language.postfixOps
