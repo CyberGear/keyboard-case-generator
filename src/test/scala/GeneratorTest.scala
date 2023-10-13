@@ -9,9 +9,8 @@ class GeneratorTest extends AnyFlatSpec with Matchers with Utils {
   it should "generate something" in {
     val layout = YamlMapper.readValue[Layout](
       asYamlString(
-        """[{x:1,a:7,w:2},""],
-          |[{h:2},"",{x:2,h:2},""],
-          |[{y:1,x:1,w:2},""]
+        """[{a:7,w:2},""],
+          |["", ""]
           |""".stripMargin
       )
     )
@@ -20,6 +19,9 @@ class GeneratorTest extends AnyFlatSpec with Matchers with Utils {
     val testKeyboard = keyboard.copy(blocks = keyboard.blocks.take(1).map(_.copy(layout = layout)))
 
     val generator = new KleKeyboardCaseGenerator(keyboard)
+
+//    Util.storeCase(generator.generateCase)
+
     Util.preview(generator.generateCase.blocks.head.parts.head.solid)
   }
 

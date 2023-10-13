@@ -37,7 +37,7 @@ class KleKeyboardCaseGenerator(val keyboard: Keyboard) {
   private def generateToplessThikPlate(keyboard: Keyboard, block: KeyboardBlock): Solid = {
     val plate       = buildBox(block, 5 mm, 0 mm)
     val switches    = block.layout.keys.map(_.switch(block.size, 5 mm)).combine
-    val switchSpace = block.layout.keys.map(_.switchSpace(block.size, 3.5 mm)).combine
+    val switchSpace = block.layout.keys.map(_.switchClearance(block.size, 3.5 mm)).combine
 
     plate - switches - switchSpace
   }
