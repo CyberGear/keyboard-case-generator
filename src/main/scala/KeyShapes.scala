@@ -57,18 +57,18 @@ object KeyShapes {
       solid.moveXY((key.w / -2) pu, (key.h / -2) pu).rotateZ(angle).moveXY(key.w / 2 pu, key.h / 2 pu)
 
     def stabilizerAngle(size: Size): Angle =
-      if (key.w > key.h) if (key.y < size.height / 2) 180 ° else 0 °
-      else if (key.x < size.width / 2) 90 °
-      else -90 °
+      if (key.w > key.h) if (key.y < size.height / 2) 0 ° else 180 °
+      else if (key.x < size.width / 2) -90 °
+      else 90 °
 
     def stabilizer(thickness: Length): Option[Solid] =
       StabsGap
         .get(key.w.orBigger(key.h))
         .map(stabDistance =>
           List(
-            key.centerTwoFromInnerEdges(Cube(4.2 mm, 2.8 mm, thickness), stabDistance).moveY(0.9 mm),
-            key.centerTwoFromCenters(Cube(3 mm, 13.5 mm, thickness), stabDistance).moveY(-1.22 mm),
-            key.centerTwoFromCenters(Cube(6.7 mm, 12.3 mm, thickness), stabDistance).moveY(-0.55 mm),
+            key.centerTwoFromInnerEdges(Cube(4.4 mm, 2.8 mm, thickness), stabDistance).moveY(0.9 mm),
+            key.centerTwoFromCenters(Cube(3.4 mm, 13.5 mm, thickness), stabDistance).moveY(-1.22 mm),
+            key.centerTwoFromCenters(Cube(7.1 mm, 12.3 mm, thickness), stabDistance).moveY(-0.55 mm),
             if (key.w >= BigDecimal(3)) key.center(Cube(stabDistance, 4.6 mm, thickness))
             else key.center(Cube(18 mm, 10.7 mm, thickness)).moveY(-0.55 mm),
           ).combine
@@ -79,7 +79,7 @@ object KeyShapes {
         .get(key.w.orBigger(key.h))
         .map(stabDistance =>
           List(
-            key.centerTwoFromCenters(Cube(8.4 mm, 16 mm, thickness), stabDistance).moveY(-1.85 mm),
+            key.centerTwoFromCenters(Cube(8.8 mm, 16 mm, thickness), stabDistance).moveY(-1.85 mm),
             if (key.w >= BigDecimal(3)) key.center(Cube(stabDistance, 12.1 mm, thickness)).moveY(-3.8 mm)
             else key.center(Cube(18 mm, 14 mm, thickness)).moveY(-2.85 mm),
           ).combine
