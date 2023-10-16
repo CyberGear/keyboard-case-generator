@@ -1,20 +1,26 @@
 import model.inputmodel.Keyboard
 import parser.YamlMapper
 
+import java.io.File
+
 object Launcher extends App {
 
-  private val keyboard = args.headOption match {
-    case Some(path) => YamlMapper.readValue[Keyboard](path)
-    case None       =>
-      sys.error("keyboard config path is required")
-      sys.exit(1)
+  if (args.isEmpty || args.length > 2) {
+    sys.error("Usage\n\n\tkeyboard-case-generator [mandatory: keyboard config file] [optional: output path]\n\n")
   }
 
-  def main(keyboard: Keyboard): Unit = {
-    val keyboardCase = new KleKeyboardCaseGenerator(keyboard).generateCase
-    Util.storeCase(keyboardCase)
-  }
+  private val keyboard = YamlMapper.readValue[Keyboard](args(0))
+  private val outputPath = args.get(1).map(new File(_).getAbsolutePath).getOrElse("./")
 
-  main(keyboard)
+  println(s"## $outputPath")
+
+  val keyboardCase = new KleKeyboardCaseGenerator(keyboard).generateCase
+  Util.storeCase(outputPath, keyboardCase)
+
+  implicit class ArrayImplicits[A](arr: Array[A]) {
+    def get(n: Int): Option[A] =
+      if (arr.length > n) Some(arr(n))
+      else None
+  }
 
 }

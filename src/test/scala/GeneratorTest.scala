@@ -20,9 +20,9 @@ class GeneratorTest extends AnyFlatSpec with Matchers with Utils {
 
     val generator = new KleKeyboardCaseGenerator(testKeyboard)
 
-    Util.storeCase(generator.generateCase)
+//    Util.storeCase(generator.generateCase)
 
-//    Util.preview(generator.generateCase.blocks.head.parts.head.solid)
+    Util.preview(generator.generateCase.blocks.head.parts.head.solid)
   }
 
 }
