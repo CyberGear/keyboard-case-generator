@@ -7,12 +7,14 @@ import parser.YamlMapper
 class GeneratorTest extends AnyFlatSpec with Matchers with Utils {
 
   it should "generate something" in {
-    val layout = YamlMapper.readValue[Layout](
-      asYamlString(
-        """[{w:2},"","","","",{w:2},""],
-          |[{w:7},""]
+    val layout = readLayoutYaml(
+        """---
+          |layout: >
+          |  [ "", {x:2}, "" ],
+          |  [ {x:1,w:2}, "" ],
+          |  [ "", {x:0.5}, "", {x:0.5}, "" ],
+          |  [ {x:0.75}, "", {x:0.5}, "" ]
           |""".stripMargin
-      )
     )
 
     val keyboard     = YamlMapper.readValue[Keyboard](ClassLoader.getSystemResource("MK-LTK.yml"))
@@ -20,7 +22,7 @@ class GeneratorTest extends AnyFlatSpec with Matchers with Utils {
 
     val generator = new KleKeyboardCaseGenerator(testKeyboard)
 
-//    Util.storeCase(generator.generateCase)
+//    Util.storeCase("/home/marius/Documents", generator.generateCase)
 
     Util.preview(generator.generateCase.blocks.head.parts.head.solid)
   }

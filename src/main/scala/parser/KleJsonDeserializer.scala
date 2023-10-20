@@ -14,20 +14,23 @@ class KleJsonDeserializer extends JsonDeserializer[Layout] {
   private val Switch = """(?s)^.*?(".*?".*?,).*""".r
 
   override def deserialize(p: JsonParser, ctxt: DeserializationContext): Layout = {
-    val kleJson = ctxt.readValue(p, classOf[String])
-    val patchedKleJson = kleJson.patch(kleJson.lastIndexOf("]"), "],", 1)
-    Layout(readAllKeys(patchedKleJson)).invert
+    val kleJson = normalizeKleJson(ctxt.readValue(p, classOf[String]))
+    Layout(readAllKeys(kleJson)).invert
   }
 
+  private def normalizeKleJson(kleJson: String): String =
+    kleJson.patch(kleJson.lastIndexOf("]"), "],", 1)
+
   @tailrec
-  private def readAllKeys(input: String, rows: List[List[Key]] = Nil): List[Key] = input match {
-    case Row(row, group) =>
-      readAllKeys(
-        input.drop(row.length + 1).trim,
-        rows :+ readKeys(s"${group.trim},", rows.lastOption.map(_.head)),
-      )
-    case _               => rows.flatten
-  }
+  private def readAllKeys(input: String, rows: List[List[Key]] = Nil): List[Key] =
+    input match {
+      case Row(row, group) =>
+        readAllKeys(
+          input.drop(row.length + 1).trim,
+          rows :+ readKeys(s"${group.trim},", rows.lastOption.map(_.head)),
+        )
+      case _               => rows.flatten
+    }
 
   @tailrec
   private def readKeys(row: String, previousRowKey: Option[Key], keys: List[Key] = Nil): List[Key] =

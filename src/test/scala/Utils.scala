@@ -1,13 +1,18 @@
-trait Utils {
+import model.TestLayout
+import model.inputmodel.Layout
+import parser.YamlMapper
 
-  protected def asYamlString(kle: String): String =
-    s""""${kle.replace("\"", "\\\"")}""""
+trait Utils {
 
   implicit class AnyLog[A](a: A) {
     def log: A = {
       println(a)
       a
     }
+  }
+
+  def readLayoutYaml(yaml: String): Layout = {
+    YamlMapper.readValue[TestLayout](yaml).layout
   }
 
 }
