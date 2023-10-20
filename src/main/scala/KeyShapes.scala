@@ -57,9 +57,9 @@ object KeyShapes {
       solid.moveXY((key.w / -2) pu, (key.h / -2) pu).rotateZ(angle).moveXY(key.w / 2 pu, key.h / 2 pu)
 
     def stabilizerAngle(size: Size): Angle =
-      if (key.w > key.h) if (key.y < size.height / 2) 0 ° else 180 °
-      else if (key.x < size.width / 2) -90 °
-      else 90 °
+      if (key.w > key.h) if (key.y < size.height / 2) 180 ° else 180 °
+      else if (key.x < size.width / 2) 90 °
+      else -90 °
 
     def stabilizer(thickness: Length): Option[Solid] =
       StabsGap
