@@ -19,7 +19,8 @@ class KleKeyboardCaseGenerator(val keyboard: Keyboard) {
         block.name,
         List(
 //          Part("top-plate-with-brim", generateTopPlateWithBrim(keyboard, block)),
-          Part("topless-thick-plate", generateToplessThickPlate(keyboard, block))
+//          Part("topless-thick-plate", generateToplessThickPlate(keyboard, block)),
+          Part("switchLayout", switchLayout(keyboard, block))
         ),
       )
     ),
@@ -40,6 +41,14 @@ class KleKeyboardCaseGenerator(val keyboard: Keyboard) {
     val switchSpace = block.layout.keys.map(_.switchClearance(block.size, 3.5 mm)).combine
 
     plate - switches - switchSpace
+  }
+
+  private def switchLayout(keyboard: Keyboard, block: KeyboardBlock): Solid = {
+    val box         = buildBox(block, 2 mm)
+    val switches    = block.layout.keys.map(_.cap).combine
+    val switchSpace = block.layout.keys.map(_.kPlace(2 mm)).combine
+
+    box - switchSpace + switches
   }
 
 //  private def generateTestSolid(keyboard: Keyboard, block: KeyboardBlock): Solid = {
