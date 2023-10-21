@@ -29,4 +29,3 @@ jobs:
         cache: 'sbt'
     - name: Run tests
       run: sbt clean "testOnly -- -l Wip"
-      # Optional: This step uploads information to the GitHub dependency graph and unblocking Dependabot alerts for the repository
