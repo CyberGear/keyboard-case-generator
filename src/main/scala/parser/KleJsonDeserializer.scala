@@ -2,7 +2,6 @@ package parser
 
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.{DeserializationContext, JsonDeserializer}
-import model.inputmodel.Layout
 import model.inputmodel._
 
 import scala.annotation.tailrec
@@ -13,10 +12,8 @@ class KleJsonDeserializer extends JsonDeserializer[Layout] {
   private val Mods   = """(?s)^[^"]*?(\{(.*?)}.*?,.*?".*?".*?,).*""".r
   private val Switch = """(?s)^.*?(".*?".*?,).*""".r
 
-  override def deserialize(p: JsonParser, ctxt: DeserializationContext): Layout = {
-    val kleJson = normalizeKleJson(ctxt.readValue(p, classOf[String]))
-    Layout(readAllKeys(kleJson)).invert
-  }
+  override def deserialize(p: JsonParser, context: DeserializationContext): Layout =
+    Layout(readAllKeys(normalizeKleJson(context.readValue(p, classOf[String])))).invert
 
   private def normalizeKleJson(kleJson: String): String =
     kleJson.patch(kleJson.lastIndexOf("]"), "],", 1)

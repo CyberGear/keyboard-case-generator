@@ -2,11 +2,10 @@ import model.inputmodel.Keyboard
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import parser.YamlMapper
-import org.scalatest.tagobjects.Slow
 
 class GeneratorTest extends AnyFlatSpec with Matchers with Utils {
 
-  it should "generate something" taggedAs(Wip) in {
+  it should "generate something" taggedAs Wip in {
     val layout = readLayoutYaml(
         """---
           |layout: >

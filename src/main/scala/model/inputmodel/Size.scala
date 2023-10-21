@@ -1,5 +1,5 @@
 package model.inputmodel
 
 case class Size(width: BigDecimal, height: BigDecimal) {
-  override def toString: String = s"${width}x${height}"
+  override def toString: String = s"${width}x$height"
 }

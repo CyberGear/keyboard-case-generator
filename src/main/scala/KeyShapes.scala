@@ -7,6 +7,7 @@ import squants.space._
 
 import scala.language.postfixOps
 
+//noinspection NonAsciiCharacters
 object KeyShapes {
 
   implicit class KeyImplicits(key: Key) {
