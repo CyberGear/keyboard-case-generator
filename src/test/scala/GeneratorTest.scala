@@ -2,6 +2,7 @@ import model.inputmodel.Keyboard
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import parser.YamlMapper
+import scala.language.postfixOps
 
 class GeneratorTest extends AnyFlatSpec with Matchers with Utils {
 
@@ -9,10 +10,11 @@ class GeneratorTest extends AnyFlatSpec with Matchers with Utils {
     val layout = readLayoutYaml(
         """---
           |layout: >
-          |  [ "", {x:2}, "" ],
-          |  [ {x:1,w:2}, "" ],
-          |  [ "", {x:0.5}, "", {x:0.5}, "" ],
-          |  [ {x:0.75}, "", {x:0.5}, "" ]
+          |  ["-","*","/","Num Lock"],
+          |  [{h:2},"+","7\nHome","8\n↑","9\nPgUp"],
+          |  [{x:1},"4\n←","5","6\n→"],
+          |  [{h:2},"Enter","1\nEnd","2\n↓","3\nPgDn"],
+          |  [{x:1},".\nDel",{w:2},"0\nIns"]
           |""".stripMargin
     )
 
@@ -21,9 +23,13 @@ class GeneratorTest extends AnyFlatSpec with Matchers with Utils {
 
     val generator = new KleKeyboardCaseGenerator(testKeyboard)
 
-//    Util.storeCase("/home/marius/Documents", generator.generateCase)
+//    Util.storeCase("/home/marius/Documents", generator.generateCase.copy(name = s"kb-1"))
 
     Util.preview(generator.generateCase.blocks.head.parts.head.solid)
+  }
+
+  it should "draw mc-pro-c" in {
+    // TODO: impl
   }
 
 }
