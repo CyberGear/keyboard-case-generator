@@ -25,7 +25,7 @@ object AdvCube {
         xyr.filter(_.value > 0).map(r => xyrCube(x, y, z, r, r * 2)),
         xzr.filter(_.value > 0).map(r => xzrCube(x, y, z, r, r * 2)),
         yzr.filter(_.value > 0).map(r => yzrCube(x, y, z, r, r * 2)),
-      ).flatten.reduceOption(_ * _).getOrElse(AdvCube(x, y, z))
+      ).flatten.reduceOption(_ * _).getOrElse(Cube(x, y, z))
 
   private def xyrCube(x: Length, y: Length, z: Length, r: Length, d: Length): Solid =
     if (d > x || d > y) throw new IllegalAccessException("CustomCube: xyr radius is too big")
