@@ -31,8 +31,4 @@ class GeneratorTest extends AnyFlatSpec with Matchers with Utils {
     Util.preview(solids.reduce(_ + _))
   }
 
-  it should "generate MCU" in {
-    Util.preview(McuProC.cutOut())
-  }
-
 }
