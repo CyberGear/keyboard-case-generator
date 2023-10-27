@@ -1,7 +1,10 @@
+import custom.McuProC
 import model.inputmodel.Keyboard
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import parser.YamlMapper
+import scadla.InlineOps.Ops
+import scadla.Solid
 
 import scala.language.postfixOps
 
@@ -11,11 +14,9 @@ class GeneratorTest extends AnyFlatSpec with Matchers with Utils {
     val layout = readLayoutYaml(
       """---
         |layout: >
-        |  ["-","*","/","Num Lock"],
-        |  [{h:2},"+","7\nHome","8\n↑","9\nPgUp"],
-        |  [{x:1},"4\n←","5","6\n→"],
-        |  [{h:2},"Enter","1\nEnd","2\n↓","3\nPgDn"],
-        |  [{x:1},".\nDel",{w:2},"0\nIns"]
+        |  ["",""],
+        |  ["",""],
+        |  ["",""]
         |""".stripMargin
     )
 
@@ -24,9 +25,14 @@ class GeneratorTest extends AnyFlatSpec with Matchers with Utils {
 
     val generator = new KleKeyboardCaseGenerator(testKeyboard)
 
-//    Util.storeCase("/home/marius/Documents", generator.generateCase.copy(name = s"kb-1"))
+    Util.storeCase("/home/marius/Documents", generator.generateCase.copy(name = s"kb-3"))
 
-    Util.preview(generator.generateCase.blocks.head.parts.head.solid)
+    val solids: List[Solid] = generator.generateCase.blocks.head.parts.map(_.solid)
+    Util.preview(solids.reduce(_ + _))
+  }
+
+  it should "generate MCU" in {
+    Util.preview(McuProC.cutOut())
   }
 
 }
