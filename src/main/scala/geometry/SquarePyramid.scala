@@ -1,4 +1,4 @@
-package custom
+package geometry
 
 import scadla.InlineOps.{AngleConversions, Ops}
 import scadla._

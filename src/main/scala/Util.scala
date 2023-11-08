@@ -12,7 +12,8 @@ object Util {
   def storeCase(basePath: String, keyboardCase: Case): Unit = {
     keyboardCase.blocks.foreach { case Block(blockName, parts) =>
       parts.foreach { case Part(name, solid) =>
-        val partName = s"${keyboardCase.name}_${keyboardCase.version}_${blockName}_$name.stl"
+        val bName = blockName.map(name => s"_${name}").getOrElse("")
+        val partName = s"${keyboardCase.name}_${keyboardCase.version}${bName}_$name.stl"
         val target = new File(s"$basePath/${keyboardCase.name}/${keyboardCase.version}/$partName")
         target.getParentFile.mkdirs()
         OpenSCAD.toSTL(solid, target.getAbsolutePath)

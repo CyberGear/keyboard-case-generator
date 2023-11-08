@@ -1,4 +1,3 @@
-import custom.McuProC
 import model.inputmodel.Keyboard
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
@@ -20,12 +19,12 @@ class GeneratorTest extends AnyFlatSpec with Matchers with Utils {
         |""".stripMargin
     )
 
-    val keyboard     = YamlMapper.readValue[Keyboard](ClassLoader.getSystemResource("MK-LTK.yml"))
+    val keyboard     = YamlMapper.readValue[Keyboard](ClassLoader.getSystemResource("MK-LTK-minimal-yaml.yml"))
     val testKeyboard = keyboard.copy(blocks = keyboard.blocks.take(1).map(_.copy(layout = layout)))
 
-    val generator = new KleKeyboardCaseGenerator(testKeyboard)
+    val generator = new KleKeyboardCaseGenerator(keyboard)
 
-    Util.storeCase("/home/marius/Documents", generator.generateCase.copy(name = s"kb-3"))
+    Util.storeCase("/home/marius/Documents", generator.generateCase.copy(version = version))
 
     val solids: List[Solid] = generator.generateCase.blocks.head.parts.map(_.solid)
     Util.preview(solids.reduce(_ + _))

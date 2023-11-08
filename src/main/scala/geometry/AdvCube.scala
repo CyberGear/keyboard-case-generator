@@ -1,4 +1,4 @@
-package custom
+package geometry
 
 import scadla.InlineOps.{AngleConversions, Ops}
 import scadla._
@@ -6,6 +6,7 @@ import squants.space.Length
 
 import scala.language.postfixOps
 
+//noinspection NonAsciiCharacters
 object AdvCube {
   def apply(
       x: Length,

@@ -1,6 +1,6 @@
 import KeyShapes._
 import constants._
-import custom.{AdvCube, McuProC}
+import geometry.AdvCube
 import model.inputmodel._
 import model.outputmodel._
 import scadla.InlineOps._
@@ -53,19 +53,27 @@ class KleKeyboardCaseGenerator(val keyboard: Keyboard) {
     val switches = block.layout.keys.map(_.switch(block.size, 15 mm)).combine
     val switchSpace = block.layout.keys.map(_.switchClearance(block.size, 13.5 mm)).combine
 
-    val x = block.size.width.pu / 2
+    val x = block.mcuGravity match {
+      case Gravity.Center => block.size.width.pu / 2
+      case Gravity.Left => block.mcu.width / 2
+      case Gravity.Right => block.size.width.pu - block.mcu.width / 2
+    }
     val y = block.size.height.pu -1.81.mm
 
-    (plate - switches - switchSpace - space - cover) - McuProC.cutOut().move(x, y, 1.mm)
+    (plate - switches - switchSpace - space - cover) - block.mcu.cutOut().move(x, y, 1.mm)
   }
 
   private def generateMinimalCaseBottom(keyboard: Keyboard, block: KeyboardBlock): Solid = {
     val cover = buildBox(block, 2 mm, 0 mm)
 
-    val x = block.size.width.pu / 2
+    val x = block.mcuGravity match {
+      case Gravity.Center => block.size.width.pu / 2
+      case Gravity.Left => block.mcu.width / 2
+      case Gravity.Right => block.size.width.pu - block.mcu.width / 2
+    }
     val y = block.size.height.pu - 1.80.mm
 
-    cover + McuProC.addOn().move(x, y, 1.mm) - McuProC.cutOut().move(x, y, 1.mm)
+    cover + block.mcu.addOn().move(x, y, 1.mm) - block.mcu.cutOut().move(x, y, 1.mm)
   }
 
   private def switchLayout(keyboard: Keyboard, block: KeyboardBlock): Solid = {

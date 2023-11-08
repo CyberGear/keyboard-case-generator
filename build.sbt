@@ -13,6 +13,7 @@ lazy val root = (project in file("."))
     libraryDependencies += "com.github.pjfanning" %% "jackson-module-enumeratum" % "2.15.2",
     libraryDependencies += "com.fasterxml.jackson.core" % "jackson-annotations" % "2.15.2",
     libraryDependencies += "com.beachape" %% "enumeratum" % "1.7.3",
+    libraryDependencies += "joda-time" % "joda-time" % "2.12.5",
 
     libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.17" % "test"
   )
