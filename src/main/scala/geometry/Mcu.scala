@@ -25,7 +25,7 @@ sealed abstract class Mcu(pcbWidth: Length, pcbLength: Length, pcbThickness: Len
       AdvCube(15.mm, 10.mm, 10.mm, xzr = Some(2.mm))
         .moveX((pcbWidth - 15.mm) / 2)
         .moveY(pcbLength + 1.5.mm)
-        .moveZ(-2.mm),
+        .moveZ(-2.5.mm),
     ).reduce(_ + _)
 
     (initialShape - snap + negativeSpace).moveX(-pcbWidth / 2).moveY(-pcbLength - 1.5.mm)
@@ -33,7 +33,7 @@ sealed abstract class Mcu(pcbWidth: Length, pcbLength: Length, pcbThickness: Len
 
   def addOn(): Solid = {
     val backBrace        = Cube(pcbWidth, 3.mm, pcbThickness * 3).moveY(-2.mm)
-    val frontPanel       = AdvCube(pcbWidth + 4.mm, 1.5.mm, 8.5.mm, xzr = Some(1.mm)).moveY(pcbLength).moveX(-2.mm)
+    val frontPanel       = AdvCube(pcbWidth + 4.mm, 1.5.mm, 9.mm, xzr = Some(1.mm)).moveY(pcbLength).moveX(-2.mm)
     val frontPanelBrace1 =
       AdvCube(2.mm, 5.mm, pcbThickness * 3, xyr = Some(1.mm), yzr = Some(1.mm)).moveY(pcbLength - 4.mm).moveX(-2.mm)
     val frontPanelBrace2 =
@@ -48,7 +48,7 @@ object Mcu extends Enum[Mcu] {
   case class Generic(pcbWidth: Length, pcbLength: Length, pcbThickness: Length, port: Port)
       extends Mcu(pcbWidth, pcbLength, pcbThickness, port)
 
-  case object ProC extends Mcu(19.mm, 35.1.mm, 1.6.mm, Port.UsbC)
+  case object ProC extends Mcu(19.mm, 35.2.mm, 1.6.mm, Port.UsbC)
 
   override def values: IndexedSeq[Mcu] = findValues
 }

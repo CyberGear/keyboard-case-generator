@@ -3,6 +3,7 @@ package geometry
 import scadla.InlineOps.{AngleConversions, Ops}
 import scadla._
 import squants.space.Length
+import squants.space.LengthConversions.LengthConversions
 
 import scala.language.postfixOps
 
@@ -65,5 +66,23 @@ object AdvCube {
         Translate(r, r, r, AdvCube(x - d, y - d, z - d)),
         Sphere(r),
       )
+
+  def bottomChamferXyR(w: Length, d: Length, h: Length, r: Length, c: Length): Solid = {
+    val o = 0.mm
+    Hull(
+      Hull(
+        Cylinder(r - c, r, c).moveX(r).moveY(r),
+        Cylinder(r - c, r, c).moveX(r).moveY(r).moveX(w - r * 2),
+        Cylinder(r - c, r, c).moveX(r).moveY(r).moveY(d - r * 2),
+        Cylinder(r - c, r, c).moveX(r).moveY(r).moveX(w - r * 2).moveY(d - r * 2)
+      ),
+      Hull(
+        Cylinder(r, r, c).moveX(r).moveY(r).moveZ(h - c),
+        Cylinder(r, r, c).moveX(r).moveY(r).moveZ(h - c).moveX(w - r * 2),
+        Cylinder(r, r, c).moveX(r).moveY(r).moveZ(h - c).moveY(d - r * 2),
+        Cylinder(r, r, c).moveX(r).moveY(r).moveZ(h - c).moveX(w - r * 2).moveY(d - r * 2)
+      )
+    )
+  }
 
 }

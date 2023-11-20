@@ -30,8 +30,8 @@ class KleKeyboardCaseGenerator(val keyboard: Keyboard) {
   )
 
   private def generateTopPlateWithBrim(keyboard: Keyboard, block: KeyboardBlock): Solid = {
-    val box      = buildBox(block, 7.5 mm)
-    val plate    = buildBox(block, 1.5 mm)
+    val box      = outerBox(block, 7.5 mm)
+    val plate    = outerBox(block, 1.5 mm)
     val keySpace = block.layout.keys.map(_.kPlace(7.5 mm)).combine
     val switches = block.layout.keys.map(_.switch(block.size, 1.5 mm)).combine
 
@@ -39,37 +39,37 @@ class KleKeyboardCaseGenerator(val keyboard: Keyboard) {
   }
 
   private def generateToplessThickPlate(keyboard: Keyboard, block: KeyboardBlock): Solid = {
-    val plate = buildBox(block, 5 mm, 2 mm)
-    val switches = block.layout.keys.map(_.switch(block.size, 5 mm)).combine
+    val plate       = outerBox(block, 5 mm, 2 mm)
+    val switches    = block.layout.keys.map(_.switch(block.size, 5 mm)).combine
     val switchSpace = block.layout.keys.map(_.switchClearance(block.size, 3.5 mm)).combine
 
     plate - switches - switchSpace
   }
 
   private def generateMinimalCaseTop(keyboard: Keyboard, block: KeyboardBlock): Solid = {
-    val plate = buildBox(block, 15 mm, 1.2 mm)
-    val space = buildBox(block, 10 mm, -1.8 mm)
-    val cover = buildBox(block, 2 mm, 0 mm)
-    val switches = block.layout.keys.map(_.switch(block.size, 15 mm)).combine
+    val plate       = outerBox(block, 15 mm, 1.2 mm)
+    val space       = outerBox(block, 10 mm, -1.8 mm)
+    val cover       = outerBox(block, 2 mm, 0 mm)
+    val switches    = block.layout.keys.map(_.switch(block.size, 15 mm)).combine
     val switchSpace = block.layout.keys.map(_.switchClearance(block.size, 13.5 mm)).combine
 
     val x = block.mcuGravity match {
       case Gravity.Center => block.size.width.pu / 2
-      case Gravity.Left => block.mcu.width / 2
-      case Gravity.Right => block.size.width.pu - block.mcu.width / 2
+      case Gravity.Left   => block.mcu.width / 2
+      case Gravity.Right  => block.size.width.pu - block.mcu.width / 2
     }
-    val y = block.size.height.pu -1.81.mm
+    val y = block.size.height.pu - 1.81.mm
 
     (plate - switches - switchSpace - space - cover) - block.mcu.cutOut().move(x, y, 1.mm)
   }
 
   private def generateMinimalCaseBottom(keyboard: Keyboard, block: KeyboardBlock): Solid = {
-    val cover = buildBox(block, 2 mm, 0 mm)
+    val cover = outerBox(block, 2 mm, 0 mm, AdvCube.bottomChamferXyR(_, _, _, _, 0.5.mm))
 
     val x = block.mcuGravity match {
       case Gravity.Center => block.size.width.pu / 2
-      case Gravity.Left => block.mcu.width / 2
-      case Gravity.Right => block.size.width.pu - block.mcu.width / 2
+      case Gravity.Left   => block.mcu.width / 2
+      case Gravity.Right  => block.size.width.pu - block.mcu.width / 2
     }
     val y = block.size.height.pu - 1.80.mm
 
@@ -77,24 +77,18 @@ class KleKeyboardCaseGenerator(val keyboard: Keyboard) {
   }
 
   private def switchLayout(keyboard: Keyboard, block: KeyboardBlock): Solid = {
-    val switches = block.layout.keys.map(_.switch(block.size, 5 mm)).combine
+    val switches    = block.layout.keys.map(_.switch(block.size, 5 mm)).combine
     val switchSpace = block.layout.keys.map(_.switchClearance(block.size, 3.5 mm)).combine
 
     switches + switchSpace
   }
 
-//  private def generateTestSolid(keyboard: Keyboard, block: KeyboardBlock): Solid = {
-//    val box      = buildBox(block)
-//    val keySpace = block.layout.keys.map(_.kPlace).combine
-//    val caps     = block.layout.keys.map(_.cap).combine
-//    val switches = block.layout.keys.map(_.switch(block.size)).combine
-//
-//    val axis = (Cube(30 mm, 1 mm, 1 mm) + Cube(1 mm, 20 mm, 1 mm) + Cube(1 mm, 1 mm, 10 mm)).moveZ(-5 mm)
-////    box - caps + switches
-//    keySpace - caps + switches
-//  }
-
-  private def buildBox(block: KeyboardBlock, thickness: Length, brim: Length = CaseBrim): Solid = {
+  private def outerBox(
+      block: KeyboardBlock,
+      thickness: Length,
+      brim: Length = CaseBrim,
+      makeSolid: (Length, Length, Length, Length) => Solid = (x, y, z, r) => AdvCube(x, y, z, xyr = Some(r)),
+  ): Solid = {
     val topEdge    = block.top match {
       case EdgeType.Free => block.layout.keys.map(k => k.y.pu + k.h.pu + brim).max
     }
@@ -107,7 +101,7 @@ class KleKeyboardCaseGenerator(val keyboard: Keyboard) {
     val rightEdge  = block.right match {
       case EdgeType.Free => block.layout.keys.map(k => k.x.pu + k.w.pu + brim).max
     }
-    AdvCube(rightEdge - leftEdge, topEdge - bottomEdge, thickness, xyr = Some(1.5 mm)).moveXY(-brim, -brim)
+    makeSolid(rightEdge - leftEdge, topEdge - bottomEdge, thickness, 1.5.mm).moveXY(-brim, -brim)
   }
 
 }
