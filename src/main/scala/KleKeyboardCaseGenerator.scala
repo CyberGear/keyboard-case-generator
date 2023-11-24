@@ -22,7 +22,7 @@ class KleKeyboardCaseGenerator(val keyboard: Keyboard) {
 //          Part("top-plate-with-brim", generateTopPlateWithBrim(keyboard, block)),
 //          Part("topless-thick-plate", generateToplessThickPlate(keyboard, block)),
           Part("minimal-case-top", generateMinimalCaseTop(keyboard, block)),
-          Part("minimal-case-bottom", generateMinimalCaseBottom(keyboard, block)),
+          Part("minimal-case-bottom", generateMinimalCaseBottom(keyboard, block))
 //          Part("switchLayout", switchLayout(keyboard, block))
         ),
       )
@@ -47,7 +47,7 @@ class KleKeyboardCaseGenerator(val keyboard: Keyboard) {
   }
 
   private def generateMinimalCaseTop(keyboard: Keyboard, block: KeyboardBlock): Solid = {
-    val plate       = outerBox(block, 15 mm, 1.2 mm)
+    val plate       = outerBox(block, 15 mm, 1.2 mm, AdvCube.topChamferXyR(_, _, _, _, 0.5.mm))
     val space       = outerBox(block, 10 mm, -1.8 mm)
     val cover       = outerBox(block, 2 mm, 0 mm)
     val switches    = block.layout.keys.map(_.switch(block.size, 15 mm)).combine
@@ -60,11 +60,22 @@ class KleKeyboardCaseGenerator(val keyboard: Keyboard) {
     }
     val y = block.size.height.pu - 1.81.mm
 
-    (plate - switches - switchSpace - space - cover) - block.mcu.cutOut().move(x, y, 1.mm)
+    (plate - switches - switchSpace - space - cover) - block.mcu.cutOut().move(x, y, 1.mm) - (
+      Cylinder(1.5.mm, block.size.height.pu - 8.mm).moveZ(4.mm).rotateX(-90.°).moveX(3.mm).moveZ(3.mm) +
+      Cylinder(1.5.mm, block.size.height.pu - 8.mm).moveZ(4.mm).rotateX(-90.°).moveX(block.size.width.pu - 3.mm).moveZ(3.mm) +
+      Cylinder(1.5.mm, block.size.width.pu - 8.mm).moveZ(4.mm).rotateY(90.°).moveY(3.mm).moveZ(3.mm) +
+      Cylinder(1.5.mm, block.size.width.pu - 8.mm).moveZ(4.mm).rotateY(90.°).moveY(block.size.height.pu - 3.mm).moveZ(3.mm)
+    )
   }
 
   private def generateMinimalCaseBottom(keyboard: Keyboard, block: KeyboardBlock): Solid = {
-    val cover = outerBox(block, 2 mm, 0 mm, AdvCube.bottomChamferXyR(_, _, _, _, 0.5.mm))
+    val cover = outerBox(block, 2 mm, 0 mm, AdvCube.bottomChamferXyR(_, _, _, _, 0.5.mm)) +
+      Cylinder(1.5.mm, block.size.height.pu - 10.mm).moveZ(5.mm).rotateX(-90.°).moveX(3.mm).moveZ(3.mm) +
+      Cylinder(1.5.mm, block.size.height.pu - 10.mm).moveZ(5.mm).rotateX(-90.°).moveX(block.size.width.pu - 3.mm).moveZ(3.mm) +
+      Cylinder(1.5.mm, block.size.width.pu - 10.mm).moveZ(5.mm).rotateY(90.°).moveY(3.mm).moveZ(3.mm) +
+      Cylinder(1.5.mm, block.size.width.pu - 10.mm).moveZ(5.mm).rotateY(90.°).moveY(block.size.height.pu - 3.mm).moveZ(3.mm) -
+      outerBox(block, 2 mm, 0 mm).moveZ(4.mm) -
+      outerBox(block, 2 mm, -2.5 mm, AdvCube.bottomChamferXyR(_, _, _, _, 1.mm, 2.mm)).moveZ(2.mm)
 
     val x = block.mcuGravity match {
       case Gravity.Center => block.size.width.pu / 2

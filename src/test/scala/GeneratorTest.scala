@@ -33,7 +33,7 @@ class GeneratorTest extends AnyFlatSpec with Matchers with Utils {
     Util.preview(solids.reduce(_ + _))
   }
 
-  it should "have advanced cube" in {
+  it should "have advanced cube" taggedAs Wip in {
 
     val w = 10.mm
     val d = 10.mm
@@ -76,7 +76,7 @@ class GeneratorTest extends AnyFlatSpec with Matchers with Utils {
     Util.preview(
       AdvCube(1.mm, 10.mm, 5.mm).moveX(-1.mm) +
       AdvCube(10.mm, 1.mm, 5.mm).moveY(-1.mm) +
-      AdvCube.bottomChamferXyR(10.mm, 10.mm, 5.mm, 2.mm, 0.5.mm)
+      AdvCube.topChamferXyR(10.mm, 10.mm, 5.mm, 2.mm, 1.mm)
     )
 
   }
