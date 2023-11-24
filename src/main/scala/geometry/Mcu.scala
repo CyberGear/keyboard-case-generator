@@ -48,7 +48,7 @@ object Mcu extends Enum[Mcu] {
   case class Generic(pcbWidth: Length, pcbLength: Length, pcbThickness: Length, port: Port)
       extends Mcu(pcbWidth, pcbLength, pcbThickness, port)
 
-  case object ProC extends Mcu(19.mm, 35.2.mm, 1.6.mm, Port.UsbC)
+  case object ProC extends Mcu(19.mm, 35.15.mm, 1.65.mm, Port.UsbC)
 
   override def values: IndexedSeq[Mcu] = findValues
 }
