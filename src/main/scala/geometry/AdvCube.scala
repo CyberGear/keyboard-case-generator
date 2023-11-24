@@ -67,20 +67,44 @@ object AdvCube {
         Sphere(r),
       )
 
-  def bottomChamferXyR(w: Length, d: Length, h: Length, r: Length, c: Length): Solid = {
+  def bottomChamferXyR(w: Length, d: Length, h: Length, r: Length, c: Length): Solid =
+    bottomChamferXyR(w, d, h, r, c, c)
+
+  def bottomChamferXyR(w: Length, d: Length, h: Length, r: Length, cb: Length, cs: Length): Solid = {
     val o = 0.mm
     Hull(
       Hull(
-        Cylinder(r - c, r, c).moveX(r).moveY(r),
-        Cylinder(r - c, r, c).moveX(r).moveY(r).moveX(w - r * 2),
-        Cylinder(r - c, r, c).moveX(r).moveY(r).moveY(d - r * 2),
-        Cylinder(r - c, r, c).moveX(r).moveY(r).moveX(w - r * 2).moveY(d - r * 2)
+        Cylinder(r - cb, r, cs).moveX(r).moveY(r),
+        Cylinder(r - cb, r, cs).moveX(r).moveY(r).moveX(w - r * 2),
+        Cylinder(r - cb, r, cs).moveX(r).moveY(r).moveY(d - r * 2),
+        Cylinder(r - cb, r, cs).moveX(r).moveY(r).moveX(w - r * 2).moveY(d - r * 2)
       ),
       Hull(
-        Cylinder(r, r, c).moveX(r).moveY(r).moveZ(h - c),
-        Cylinder(r, r, c).moveX(r).moveY(r).moveZ(h - c).moveX(w - r * 2),
-        Cylinder(r, r, c).moveX(r).moveY(r).moveZ(h - c).moveY(d - r * 2),
-        Cylinder(r, r, c).moveX(r).moveY(r).moveZ(h - c).moveX(w - r * 2).moveY(d - r * 2)
+        Cylinder(r, r, h - cs).moveX(r).moveY(r).moveZ(cs),
+        Cylinder(r, r, h - cs).moveX(r).moveY(r).moveZ(cs).moveX(w - r * 2),
+        Cylinder(r, r, h - cs).moveX(r).moveY(r).moveZ(cs).moveY(d - r * 2),
+        Cylinder(r, r, h - cs).moveX(r).moveY(r).moveZ(cs).moveX(w - r * 2).moveY(d - r * 2)
+      )
+    )
+  }
+
+  def topChamferXyR(w: Length, d: Length, h: Length, r: Length, c: Length): Solid =
+    topChamferXyR(w, d, h, r, c, c)
+
+  def topChamferXyR(w: Length, d: Length, h: Length, r: Length, ct: Length, cs: Length): Solid = {
+    val o = 0.mm
+    Hull(
+      Hull(
+        Cylinder(r, r, h - cs).moveX(r).moveY(r),
+        Cylinder(r, r, h - cs).moveX(r).moveY(r).moveX(w - r * 2),
+        Cylinder(r, r, h - cs).moveX(r).moveY(r).moveY(d - r * 2),
+        Cylinder(r, r, h - cs).moveX(r).moveY(r).moveX(w - r * 2).moveY(d - r * 2)
+      ),
+      Hull(
+        Cylinder(r, r - ct, cs).moveX(r).moveY(r).moveZ(h - cs),
+        Cylinder(r, r - ct, cs).moveX(r).moveY(r).moveZ(h - cs).moveX(w - r * 2),
+        Cylinder(r, r - ct, cs).moveX(r).moveY(r).moveZ(h - cs).moveY(d - r * 2),
+        Cylinder(r, r - ct, cs).moveX(r).moveY(r).moveZ(h - cs).moveX(w - r * 2).moveY(d - r * 2)
       )
     )
   }
