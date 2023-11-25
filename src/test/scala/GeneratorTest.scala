@@ -76,7 +76,7 @@ class GeneratorTest extends AnyFlatSpec with Matchers with Utils {
     Util.preview(
       AdvCube(1.mm, 10.mm, 5.mm).moveX(-1.mm) +
       AdvCube(10.mm, 1.mm, 5.mm).moveY(-1.mm) +
-      AdvCube.topChamferXyR(10.mm, 10.mm, 5.mm, 2.mm, 1.mm)
+      AdvCube(10.mm, 10.mm, 5.mm, xyzr = Some(2.5.mm))
     )
 
   }

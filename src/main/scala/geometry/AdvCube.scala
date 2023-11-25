@@ -61,11 +61,18 @@ object AdvCube {
 
   private def xyzrCube(x: Length, y: Length, z: Length, r: Length, d: Length): Solid =
     if (d > x || d > y || d > z) throw new IllegalAccessException("CustomCube: 'xyzr' radius is too big")
-    else
-      Minkowski(
-        Translate(r, r, r, AdvCube(x - d, y - d, z - d)),
-        Sphere(r),
+    else {
+      val platform = Hull(
+        Sphere(r).move(r, r, r),
+        Sphere(r).move(r, r, r).moveX(x - d),
+        Sphere(r).move(r, r, r).moveY(y - d),
+        Sphere(r).move(r, r, r).moveY(y - d).moveX(x - d),
       )
+      Hull(
+        platform,
+        platform.moveZ(z - d)
+      )
+    }
 
   def bottomChamferXyR(w: Length, d: Length, h: Length, r: Length, c: Length): Solid =
     bottomChamferXyR(w, d, h, r, c, c)
