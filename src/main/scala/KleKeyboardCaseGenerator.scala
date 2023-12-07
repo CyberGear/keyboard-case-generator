@@ -60,22 +60,31 @@ class KleKeyboardCaseGenerator(val keyboard: Keyboard) {
     }
     val y = block.size.height.pu - 1.81.mm
 
-    (plate - switches - switchSpace - space - cover) - block.mcu.cutOut().move(x, y, 1.mm) - (
-      Cylinder(1.5.mm, block.size.height.pu - 8.mm).moveZ(4.mm).rotateX(-90.°).moveX(3.mm).moveZ(3.mm) +
-      Cylinder(1.5.mm, block.size.height.pu - 8.mm).moveZ(4.mm).rotateX(-90.°).moveX(block.size.width.pu - 3.mm).moveZ(3.mm) +
-      Cylinder(1.5.mm, block.size.width.pu - 8.mm).moveZ(4.mm).rotateY(90.°).moveY(3.mm).moveZ(3.mm) +
-      Cylinder(1.5.mm, block.size.width.pu - 8.mm).moveZ(4.mm).rotateY(90.°).moveY(block.size.height.pu - 3.mm).moveZ(3.mm)
-    )
+    val top = (plate - switches - switchSpace - space - cover) - block.mcu.cutOut().move(x, y, 1.mm) -
+      outerBox(block, 3.mm, -1.5 mm, (x, y, z, _) => AdvCube(x, y, z, xyzr = Some(1.5.mm))).moveZ(1.5.mm)
+
+    val screws =
+      screwPole.moveXY(1.pu, 1.pu) +
+        screwPole.moveXY(block.size.width.pu - 1.pu, 1.pu) +
+        screwPole.moveXY(1.pu, block.size.height.pu - 1.pu) +
+        screwPole.moveXY(block.size.width.pu - 1.pu, block.size.height.pu - 1.pu)
+
+    top - screws
+  }
+
+  def screwPole: Solid = {
+    Cylinder(2.mm, 2.mm, 0.5.mm) +
+      Cylinder(2.mm, 1.mm, 1.mm).moveZ(0.5.mm) +
+      Cylinder(1.mm, 1.mm, 13.8.mm) +
+      Cylinder(1.5.mm, 1.5.mm, 8.mm).moveZ(2.mm) +
+      Cylinder(2.mm, 2.mm, 1.mm).moveZ(14.mm)
   }
 
   private def generateMinimalCaseBottom(keyboard: Keyboard, block: KeyboardBlock): Solid = {
     val cover = outerBox(block, 2 mm, 0 mm, AdvCube.bottomChamferXyR(_, _, _, _, 0.5.mm)) +
-      Cylinder(1.5.mm, block.size.height.pu - 10.mm).moveZ(5.mm).rotateX(-90.°).moveX(3.mm).moveZ(3.mm) +
-      Cylinder(1.5.mm, block.size.height.pu - 10.mm).moveZ(5.mm).rotateX(-90.°).moveX(block.size.width.pu - 3.mm).moveZ(3.mm) +
-      Cylinder(1.5.mm, block.size.width.pu - 10.mm).moveZ(5.mm).rotateY(90.°).moveY(3.mm).moveZ(3.mm) +
-      Cylinder(1.5.mm, block.size.width.pu - 10.mm).moveZ(5.mm).rotateY(90.°).moveY(block.size.height.pu - 3.mm).moveZ(3.mm) -
+      outerBox(block, 3.mm, -1.5 mm, (x, y, z, _) => AdvCube(x, y, z, xyzr = Some(1.5.mm))).moveZ(1.5.mm) -
       outerBox(block, 2 mm, 0 mm).moveZ(4.mm) -
-      outerBox(block, 2 mm, -2.5 mm, AdvCube.bottomChamferXyR(_, _, _, _, 1.mm, 2.mm)).moveZ(2.mm)
+      outerBox(block, 2 mm, -2.7 mm, AdvCube.bottomChamferXyR(_, _, _, _, 1.mm, 2.mm)).moveZ(2.mm)
 
     val x = block.mcuGravity match {
       case Gravity.Center => block.size.width.pu / 2
@@ -84,7 +93,11 @@ class KleKeyboardCaseGenerator(val keyboard: Keyboard) {
     }
     val y = block.size.height.pu - 1.80.mm
 
-    cover + block.mcu.addOn().move(x, y, 1.mm) - block.mcu.cutOut().move(x, y, 1.mm)
+    cover + block.mcu.addOn().move(x, y, 1.mm) - block.mcu.cutOut().move(x, y, 1.mm) -
+      (screwPole.moveXY(1.pu, 1.pu) +
+        screwPole.moveXY(block.size.width.pu - 1.pu, 1.pu) +
+        screwPole.moveXY(1.pu, block.size.height.pu - 1.pu) +
+        screwPole.moveXY(block.size.width.pu - 1.pu, block.size.height.pu - 1.pu))
   }
 
   private def switchLayout(keyboard: Keyboard, block: KeyboardBlock): Solid = {
